@@ -1,0 +1,43 @@
+# Use the sample() function to generate artificial datasets used in simulation experiments
+
+cdf1=function(t,alpha,beta1)
+{
+1-(1-t^alpha)^beta1
+}
+cdf2=function(t,alpha,beta1,beta2,tau1)
+{
+1-(1-t^alpha)^beta2*(1-tau1^alpha)^(beta1-beta2)
+}
+cdf3=function(t,alpha,beta1,beta2,beta3,tau1,tau2)
+{
+1-(1-t^alpha)^beta3*(1-tau1^alpha)^(beta1-beta2)*(1-tau2^alpha)^(beta2-beta3)
+}
+single.sample=function(alpha,beta1,beta2,beta3,tau1,tau2)
+{
+u=runif(1,0,1)
+if(u<cdf1(tau1,alpha,beta1))
+{
+t=(1-(1-u)^(1/beta1))^(1/alpha)
+}
+else if(u>cdf2(tau2,alpha,beta1,beta2,tau1))
+{
+v=1-(1-u)/((1-tau1^alpha)^(beta1-beta2))
+w=1-(1-v)*(1/(1-tau2^alpha)^(beta2-beta3))
+t=(1-(1-w)^(1/beta3))^(1/alpha)
+}
+else
+{
+v=1-(1-u)/((1-tau1^alpha)^(beta1-beta2))
+t=(1-(1-v)^(1/beta2))^(1/alpha)
+}
+return(t)
+}
+sample=function(n,alpha,beta1,beta2,beta3,tau1,tau2)
+{
+s=0
+for(i in 1:n)
+{
+s[i]=single.sample(alpha,beta1,beta2,beta3,tau1,tau2)
+}
+return(s)
+}
